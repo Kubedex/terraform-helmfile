@@ -1,4 +1,23 @@
-# terraform-charts
+# terraform-helmfile
+
+An example that shows how to use Terraform for installing Helm Charts on a Kubernetes cluster using Helmfile.
+
+There are a couple of reasons why you would want to deploy using Terraform:
+
+* Provision complete Kubernetes clusters from scratch using Terraform
+* Passing variables to charts dynamically that Terraform manages
+
+The example uses the `docker_container` Terraform resource to spin up a local ephemeral container that runs Helmfile.
+
+We render a kubeconfig, entrypoint and helmfile.yaml into this container and execute `helmfile apply`.
+
+The demo executes against a local K3s Kubernetes cluster. To use this on remote clusters you will need to render the appropriate kubeconfig.yaml into the container.
+
+We use a local-exec to run docker logs against the helmfile docker container and detect when it finishes and what the exit code was. This informs Terraform of whether the deployment was successful or not.
+
+No Terraform state is used to determine is a Helm Chart needs to be updated. This mechanism for doing chart deployments is effectively stateless and idempotent. Inside the container we're using the helm-tiller plugin so there is no server side tiller component either.
+
+# Demo
 
 Start K3s so we can execute our demo Terraform code against it.
 
