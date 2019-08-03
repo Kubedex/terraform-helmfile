@@ -2,6 +2,8 @@
 
 An example that shows how to use Terraform for installing Helm Charts on a Kubernetes cluster using Helmfile.
 
+[![asciicast](https://asciinema.org/a/7PH3P0wHjyzFlq9KNHLNFViiK.svg)](https://asciinema.org/a/7PH3P0wHjyzFlq9KNHLNFViiK)
+
 There are a couple of reasons why you would want to deploy using Terraform:
 
 * Provision complete Kubernetes clusters from scratch using Terraform
