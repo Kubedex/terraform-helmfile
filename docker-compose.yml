@@ -1,0 +1,33 @@
+version: '3'
+services:
+  k3s-server:
+    image: rancher/k3s:v0.7.0
+    container_name: k3s-server
+    command: server --disable-agent --no-deploy traefik
+    environment:
+    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+    - K3S_KUBECONFIG_OUTPUT=/output/kubeconfig.yaml
+    - K3S_KUBECONFIG_MODE=666
+    volumes:
+    - k3s-server:/var/lib/rancher/k3s
+    - .:/output
+    ports:
+    - 6443:6443
+    network_mode: bridge
+
+  k3s-worker:
+    image: rancher/k3s:v0.7.0
+    container_name: k3s-worker
+    tmpfs:
+    - /run
+    - /var/run
+    privileged: true
+    environment:
+    - K3S_URL=https://k3s-server:6443
+    - K3S_CLUSTER_SECRET=somethingtotallyrandom
+    network_mode: bridge
+    links:
+      - k3s-server
+
+volumes:
+  k3s-server: {}
