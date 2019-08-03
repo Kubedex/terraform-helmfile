@@ -2,14 +2,21 @@
 from __future__ import print_function
 import subprocess
 import sys
+import re
 
-logs = subprocess.Popen(['docker','logs', '-f', sys.argv[1]], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+def execute(cmd):
+    popen = subprocess.Popen(cmd, stdout=subprocess.PIPE, universal_newlines=True)
+    for stdout_line in iter(popen.stdout.readline, ""):
+        yield stdout_line 
+    popen.stdout.close()
+    return_code = popen.wait()
+    if return_code:
+        raise subprocess.CalledProcessError(return_code, cmd)
 
-while True:
-    line = logs.stdout.readline()
-    if len(line) > 0:
-        print(line)
-    if "INFO: cleaning up sensitive and temp files" in line:
-        sys.exit(0)
-    if "Error:" in line:
-        sys.exit(1)
+for logline in execute(['docker','logs', '-f', sys.argv[1]]):
+    print(logline, end="")
+
+inspect_command = ["docker", "inspect", sys.argv[1], "--format='{{.State.ExitCode}}'"]
+output, error = subprocess.Popen(inspect_command, universal_newlines=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE).communicate()
+status = int(re.search(r'\d+', output).group())
+sys.exit(status)

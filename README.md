@@ -27,7 +27,9 @@ Initialise the Terraform plugins
 terraform init
 ```
 
-Run helmsman to configure the example jenkins and artifactory charts.
+Run helmfile to install the example kubernetes dashboard chart.
+
+*Warning:* The settings for this chart are dangerously insecure. This demo installs into a K3s on localhost which is the only place you should ever think about installing an unsecured dashboard.
 
 ```
 terraform apply
@@ -36,10 +38,10 @@ terraform apply
 Check that everything worked.
 
 ```
-KUBECONFIG=./kubeconfig.yaml kubectl get pods --all-namespaces
+kubectl get pods --all-namespaces
 ```
 
-You can also check out the dashboard chart that was installed.
+You can also verify that the dashboard chart that was installed by opening it in a browser.
 
 ```
 export POD_NAME=$(kubectl get pods -n dashboard -l "app=kubernetes-dashboard,release=kubernetes-dashboard" -o jsonpath="{.items[0].metadata.name}")
@@ -54,5 +56,5 @@ K3s creates a volume named `k3s-server` so data is persisted between container r
 
 ```
 docker-compose down
-docker volume rm k3s-server
+docker volume rm terraform-charts_k3s-server
 ```

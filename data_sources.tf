@@ -6,6 +6,6 @@ data "template_file" "kubeconfig" {
   template = "${file("${path.module}/kubeconfig.yaml")}"
 }
 
-data "template_file" "helmsman-deployments" {
-  template = "${file("${path.module}/helmsman-deployments.yaml")}"
+data "template_file" "helmfile" {
+  template = "${file("${path.module}/helmfile.yaml")}"
 }

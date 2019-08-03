@@ -10,10 +10,9 @@ resource "null_resource" "dockerrm" {
 
 resource "docker_container" "helmsman" {
   name       = "terraform-helmsman"
-  image      = "praqma/helmsman:latest"
+  image      = "quay.io/roboll/helmfile:v0.80.2"
   links      = ["k3s-server"]
   entrypoint = ["/entrypoint.sh"]
-  rm         = true
   start      = true
 
   upload = {
@@ -28,8 +27,8 @@ resource "docker_container" "helmsman" {
   }
 
   upload = {
-    content = "${data.template_file.helmsman-deployments.rendered}"
-    file    = "/helmsman-deployments.yaml"
+    content = "${data.template_file.helmfile.rendered}"
+    file    = "/helmfile.yaml"
   }
 
   depends_on = [
@@ -39,7 +38,7 @@ resource "docker_container" "helmsman" {
 
 resource "null_resource" "dockerlogs" {
   provisioner "local-exec" {
-    command = "sleep 5 && ./logtail.py $(docker inspect --format={{.Id}} terraform-helmsman)"
+    command = "./logtail.py $(docker inspect --format={{.Id}} terraform-helmsman)"
   }
 
   triggers = {
