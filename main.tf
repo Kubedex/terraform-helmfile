@@ -1,6 +1,6 @@
 resource "null_resource" "dockerrm" {
   provisioner "local-exec" {
-    command = "docker kill $(docker inspect --format={{.Id}} terraform-helmsman) && docker rm $(docker inspect --format={{.Id}} terraform-helmsman) || true"
+    command = "docker kill $(docker inspect --format={{.Id}} terraform-helmfile) && docker rm $(docker inspect --format={{.Id}} terraform-helmsman) || true"
   }
 
   triggers = {
@@ -8,8 +8,8 @@ resource "null_resource" "dockerrm" {
   }
 }
 
-resource "docker_container" "helmsman" {
-  name       = "terraform-helmsman"
+resource "docker_container" "helmfile" {
+  name       = "terraform-helmfile"
   image      = "quay.io/roboll/helmfile:v0.80.2"
   links      = ["k3s-server"]
   entrypoint = ["/entrypoint.sh"]
@@ -38,7 +38,7 @@ resource "docker_container" "helmsman" {
 
 resource "null_resource" "dockerlogs" {
   provisioner "local-exec" {
-    command = "./logtail.py $(docker inspect --format={{.Id}} terraform-helmsman)"
+    command = "./logtail.py $(docker inspect --format={{.Id}} terraform-helmfile)"
   }
 
   triggers = {
@@ -46,6 +46,6 @@ resource "null_resource" "dockerlogs" {
   }
 
   depends_on = [
-    "docker_container.helmsman",
+    "docker_container.helmfile",
   ]
 }
