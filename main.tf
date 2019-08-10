@@ -1,6 +1,6 @@
 resource "null_resource" "dockerrm" {
   provisioner "local-exec" {
-    command = "docker kill $(docker inspect --format={{.Id}} terraform-helmfile) && docker rm $(docker inspect --format={{.Id}} terraform-helmsman) || true"
+    command = "docker kill $(docker inspect --format={{.Id}} terraform-helmfile) && docker rm $(docker inspect --format={{.Id}} terraform-helmfile) || true"
   }
 
   triggers = {
