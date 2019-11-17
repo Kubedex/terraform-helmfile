@@ -2,10 +2,6 @@ resource "null_resource" "dockerrm" {
   provisioner "local-exec" {
     command = "docker kill $(docker inspect --format={{.Id}} terraform-helmfile) && docker rm $(docker inspect --format={{.Id}} terraform-helmfile) || true"
   }
-
-  triggers = {
-    always_run = "${timestamp()}"
-  }
 }
 
 resource "docker_container" "helmfile" {
@@ -39,10 +35,6 @@ resource "docker_container" "helmfile" {
 resource "null_resource" "dockerlogs" {
   provisioner "local-exec" {
     command = "./logtail.py $(docker inspect --format={{.Id}} terraform-helmfile)"
-  }
-
-  triggers = {
-    always_run = "${timestamp()}"
   }
 
   depends_on = [
